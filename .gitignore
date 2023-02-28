@@ -1,0 +1,6 @@
+# IDEA
+*.iml
+.idea/
+
+# Sources and other
+src/

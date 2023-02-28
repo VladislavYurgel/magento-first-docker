@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - dbdata:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: magento
+      MYSQL_USER: magento
+      MYSQL_PASSWORD: magento
+
+  web:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ../src:/var/www/html
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+    restart: always
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: magento
+      MYSQL_USER: magento
+      MYSQL_PASSWORD: magento
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=magento
+      - PMA_PASSWORD=magento
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 8080:80
+
+volumes:
+  dbdata:
+    driver: local
